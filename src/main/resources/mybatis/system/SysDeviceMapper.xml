@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.medical.project.system.mapper.SysDeviceMapper">
+    
+    <resultMap type="SysDevice" id="SysDeviceResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="rentPerMonth"    column="rent_per_month"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="deposit"    column="deposit"    />
+        <result property="picture"    column="picture"    />
+        <result property="hots"    column="hots"    />
+    </resultMap>
+
+    <sql id="selectSysDeviceVo">
+        select id, name, rent_per_month, create_time, deposit, picture, hots from sys_device
+    </sql>
+
+    <select id="selectSysDeviceList" parameterType="SysDevice" resultMap="SysDeviceResult">
+        <include refid="selectSysDeviceVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="rentPerMonth != null "> and rent_per_month = #{rentPerMonth}</if>
+            <if test="deposit != null "> and deposit = #{deposit}</if>
+            <if test="picture != null  and picture != ''"> and picture = #{picture}</if>
+            <if test="hots != null "> and hots = #{hots}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysDeviceById" parameterType="Long" resultMap="SysDeviceResult">
+        <include refid="selectSysDeviceVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSysDevice" parameterType="SysDevice" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_device
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="rentPerMonth != null">rent_per_month,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="deposit != null">deposit,</if>
+            <if test="picture != null">picture,</if>
+            <if test="hots != null">hots,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="rentPerMonth != null">#{rentPerMonth},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="deposit != null">#{deposit},</if>
+            <if test="picture != null">#{picture},</if>
+            <if test="hots != null">#{hots},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysDevice" parameterType="SysDevice">
+        update sys_device
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="rentPerMonth != null">rent_per_month = #{rentPerMonth},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="deposit != null">deposit = #{deposit},</if>
+            <if test="picture != null">picture = #{picture},</if>
+            <if test="hots != null">hots = #{hots},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysDeviceById" parameterType="Long">
+        delete from sys_device where id = #{id}
+    </delete>
+
+    <delete id="deleteSysDeviceByIds" parameterType="String">
+        delete from sys_device where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
